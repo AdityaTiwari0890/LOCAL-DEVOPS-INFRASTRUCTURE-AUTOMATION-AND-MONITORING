@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ item.name | capitalize }} Environment</title>
+</head>
+<body>
+  <main>
+    <h1>{{ item.name | capitalize }} Environment</h1>
+    <p>Local DevOps Infrastructure Automation &amp; Monitoring System</p>
+    <p>Port: {{ item.port }}</p>
+  </main>
+</body>
+</html>

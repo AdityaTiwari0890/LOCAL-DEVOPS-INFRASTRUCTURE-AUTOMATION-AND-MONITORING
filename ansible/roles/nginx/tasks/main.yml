@@ -1,0 +1,60 @@
+---
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: "{{ nginx_package }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install OpenSSH server
+  ansible.builtin.apt:
+    name: "{{ ssh_package }}"
+    state: present
+
+- name: Create application directories
+  ansible.builtin.file:
+    path: "{{ item.app_dir }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0755"
+  loop: "{{ environments }}"
+
+- name: Deploy environment HTML pages
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: "{{ item.app_dir }}/index.html"
+    owner: www-data
+    group: www-data
+    mode: "0644"
+  loop: "{{ environments }}"
+
+- name: Deploy Nginx server blocks
+  ansible.builtin.template:
+    src: nginx-site.conf.j2
+    dest: "/etc/nginx/sites-available/{{ item.name }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop: "{{ environments }}"
+  notify: Validate and reload nginx
+
+- name: Enable Nginx server blocks
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ item.name }}"
+    dest: "/etc/nginx/sites-enabled/{{ item.name }}"
+    state: link
+  loop: "{{ environments }}"
+  notify: Validate and reload nginx
+
+- name: Start and enable Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Start and enable SSH
+  ansible.builtin.service:
+    name: ssh
+    state: started
+    enabled: true

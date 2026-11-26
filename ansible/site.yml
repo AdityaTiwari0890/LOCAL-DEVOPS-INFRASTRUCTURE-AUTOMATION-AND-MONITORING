@@ -1,0 +1,9 @@
+---
+- name: Configure local infrastructure
+  hosts: local
+  become: true
+  gather_facts: true
+  roles:
+    - role: users
+    - role: nginx
+    - role: monitoring

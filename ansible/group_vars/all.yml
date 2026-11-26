@@ -1,0 +1,18 @@
+---
+project_name: local-devops
+nginx_package: nginx
+ssh_package: openssh-server
+nagios_package: nagios4
+monitoring_plugins_package: monitoring-plugins
+plugin_dir: /usr/lib/nagios/plugins
+
+environments:
+  - name: development
+    port: 8081
+    app_dir: /var/www/local-devops/development
+  - name: testing
+    port: 8082
+    app_dir: /var/www/local-devops/testing
+  - name: production
+    port: 8083
+    app_dir: /var/www/local-devops/production

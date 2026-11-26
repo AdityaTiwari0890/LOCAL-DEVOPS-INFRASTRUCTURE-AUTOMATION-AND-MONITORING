@@ -1,0 +1,115 @@
+###############################################################################
+# Managed by Ansible: local development, testing, and production monitoring
+###############################################################################
+
+define host {
+    host_name               local-devops-host
+    alias                   Local Ubuntu WSL Host
+    address                 127.0.0.1
+    check_command           check-host-alive
+    max_check_attempts      3
+    check_period            24x7
+    notification_period     24x7
+    notification_interval   30
+    notification_options    d,u,r
+    contacts                nagiosadmin
+}
+
+define hostgroup {
+    hostgroup_name          local-devops-hosts
+    alias                   Local DevOps hosts
+    members                 local-devops-host
+}
+
+define service {
+    host_name               local-devops-host
+    service_description     Localhost Availability
+    check_command           check_ping!-w 100.0,20% -c 200.0,40%
+    check_interval          1
+    retry_interval          1
+    max_check_attempts      3
+    check_period            24x7
+    notification_period     24x7
+    notification_options    w,u,c,r
+}
+
+define service {
+    host_name               local-devops-host
+    service_description     HTTP Development
+    check_command           check_http!-p 8081 -H 127.0.0.1
+    check_interval          1
+    retry_interval          1
+    max_check_attempts      3
+    check_period            24x7
+    notification_period     24x7
+    notification_options    w,u,c,r
+}
+
+define service {
+    host_name               local-devops-host
+    service_description     HTTP Testing
+    check_command           check_http!-p 8082 -H 127.0.0.1
+    check_interval          1
+    retry_interval          1
+    max_check_attempts      3
+    check_period            24x7
+    notification_period     24x7
+    notification_options    w,u,c,r
+}
+
+define service {
+    host_name               local-devops-host
+    service_description     HTTP Production
+    check_command           check_http!-p 8083 -H 127.0.0.1
+    check_interval          1
+    retry_interval          1
+    max_check_attempts      3
+    check_period            24x7
+    notification_period     24x7
+    notification_options    w,u,c,r
+}
+
+define service {
+    host_name               local-devops-host
+    service_description     SSH
+    check_command           check_ssh!-p 22 127.0.0.1
+    check_interval          1
+    retry_interval          1
+    max_check_attempts      3
+    check_period            24x7
+    notification_period     24x7
+    notification_options    w,u,c,r
+}
+
+define service {
+    host_name               local-devops-host
+    service_description     CPU Load
+    check_command           check_load!-w 4.0,3.0,2.0 -c 6.0,5.0,4.0
+    check_interval          1
+    retry_interval          1
+    max_check_attempts      3
+    check_period            24x7
+    notification_period     24x7
+}
+
+define service {
+    host_name               local-devops-host
+    service_description     Disk Usage
+    check_command           check_disk!-w 20% -c 10% -p /
+    check_interval          5
+    retry_interval          1
+    max_check_attempts      3
+    check_period            24x7
+    notification_period     24x7
+}
+
+define service {
+    host_name               local-devops-host
+    service_description     Running Processes
+    check_command           check_procs!-w 250 -c 400
+    check_interval          5
+    retry_interval          1
+    max_check_attempts      3
+    check_period            24x7
+    notification_period     24x7
+}

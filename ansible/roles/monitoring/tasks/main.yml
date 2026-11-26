@@ -1,0 +1,41 @@
+---
+- name: Install Nagios Core
+  ansible.builtin.apt:
+    name: "{{ nagios_package }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install Nagios plugins
+  ansible.builtin.apt:
+    name:
+      - "{{ monitoring_plugins_package }}"
+      - nagios-nrpe-plugin
+    state: present
+
+- name: Ensure Nagios custom configuration directory exists
+  ansible.builtin.file:
+    path: /etc/nagios4/conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Deploy custom Nagios host and service configuration
+  ansible.builtin.template:
+    src: localhost-localdevops.cfg.j2
+    dest: /etc/nagios4/conf.d/localhost-localdevops.cfg
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Validate and restart nagios
+
+- name: Start and enable Nagios
+  ansible.builtin.service:
+    name: nagios4
+    state: started
+    enabled: true
+
+- name: Verify Nagios configuration now
+  ansible.builtin.command: nagios4 -v /etc/nagios4/nagios.cfg
+  changed_when: false
